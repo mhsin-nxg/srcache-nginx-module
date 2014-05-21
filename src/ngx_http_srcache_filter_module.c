@@ -150,6 +150,13 @@ static ngx_command_t  ngx_http_srcache_commands[] = {
       offsetof(ngx_http_srcache_loc_conf_t, store_no_cache),
       NULL },
 
+    { ngx_string("srcache_store_expired"),
+      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+      ngx_http_set_complex_value_slot,
+      NGX_HTTP_LOC_CONF_OFFSET,
+      offsetof(ngx_http_srcache_loc_conf_t, store_expired),
+      NULL },
+
     { ngx_string("srcache_response_cache_control"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
       ngx_http_set_complex_value_slot,
@@ -268,6 +275,7 @@ ngx_http_srcache_create_loc_conf(ngx_conf_t *cf)
      *      conf->store_private = NULL;
      *      conf->store_no_store = NULL;
      *      conf->store_no_cache = NULL;
+     *      conf->store_expired = NULL;
      */
 
     conf->fetch = NGX_CONF_UNSET_PTR;
@@ -323,6 +331,10 @@ ngx_http_srcache_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 
     if (conf->cache_methods == 0) {
         conf->cache_methods = prev->cache_methods;
+    }
+
+    if (conf->store_expired == NULL) {
+        conf->store_expired = prev->store_expired;
     }
 
     conf->cache_methods |= NGX_HTTP_GET|NGX_HTTP_HEAD;

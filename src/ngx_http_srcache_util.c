@@ -551,8 +551,17 @@ ngx_http_srcache_response_no_cache(ngx_http_request_t *r,
     u_char             *p, *last;
     ngx_int_t           n;
     time_t              expires;
+    ngx_flag_t          store_private;
+    ngx_flag_t          store_no_store;
+    ngx_flag_t          store_no_cache;
+    ngx_flag_t          store_expired;
 
     dd("checking response cache control settings");
+
+    store_private = ngx_http_srcache_evaluate_complex_value(r, conf->store_private);
+    store_no_store = ngx_http_srcache_evaluate_complex_value(r, conf->store_no_store);
+    store_no_cache = ngx_http_srcache_evaluate_complex_value(r, conf->store_no_cache);
+    store_expired = ngx_http_srcache_evaluate_complex_value(r, conf->store_expired);
 
     ccp = r->headers_out.cache_control.elts;
 
@@ -568,19 +577,19 @@ ngx_http_srcache_response_no_cache(ngx_http_request_t *r,
         p = ccp[i]->value.data;
         last = p + ccp[i]->value.len;
 
-        if (!ngx_http_srcache_evaluate_complex_value(r, conf->store_private)
+        if (!store_private
             && ngx_strlcasestrn(p, last, (u_char *) "private", 7 - 1) != NULL)
         {
             return NGX_OK;
         }
 
-        if (!ngx_http_srcache_evaluate_complex_value(r, conf->store_no_store)
+        if (!store_no_store
             && ngx_strlcasestrn(p, last, (u_char *) "no-store", 8 - 1) != NULL)
         {
             return NGX_OK;
         }
 
-        if (!ngx_http_srcache_evaluate_complex_value(r, conf->store_no_cache)
+        if (!store_no_cache
             && ngx_strlcasestrn(p, last, (u_char *) "no-cache", 8 - 1) != NULL)
         {
             return NGX_OK;
@@ -611,7 +620,7 @@ ngx_http_srcache_response_no_cache(ngx_http_request_t *r,
             return NGX_OK;
         }
 
-        if (n == 0) {
+        if (!store_expired && n == 0) {
             return NGX_OK;
         }
 
@@ -629,7 +638,7 @@ check_expires:
         if (h != NULL && h->hash != 0) {
             expires = ngx_http_parse_time(h->value.data, h->value.len);
 
-            if (expires == NGX_ERROR || expires <= ngx_time()) {
+            if (!store_expired && (expires == NGX_ERROR || expires <= ngx_time())) {
                 return NGX_OK;
             }
 
