@@ -568,19 +568,19 @@ ngx_http_srcache_response_no_cache(ngx_http_request_t *r,
         p = ccp[i]->value.data;
         last = p + ccp[i]->value.len;
 
-        if (!conf->store_private
+        if (!ngx_http_srcache_evaluate_complex_value(r, conf->store_private)
             && ngx_strlcasestrn(p, last, (u_char *) "private", 7 - 1) != NULL)
         {
             return NGX_OK;
         }
 
-        if (!conf->store_no_store
+        if (!ngx_http_srcache_evaluate_complex_value(r, conf->store_no_store)
             && ngx_strlcasestrn(p, last, (u_char *) "no-store", 8 - 1) != NULL)
         {
             return NGX_OK;
         }
 
-        if (!conf->store_no_cache
+        if (!ngx_http_srcache_evaluate_complex_value(r, conf->store_no_cache)
             && ngx_strlcasestrn(p, last, (u_char *) "no-cache", 8 - 1) != NULL)
         {
             return NGX_OK;
@@ -1269,6 +1269,21 @@ ngx_http_srcache_cmp_int(const void *one, const void *two)
     const ngx_int_t           *b = two;
 
     return (*a < *b);
+}
+
+ngx_flag_t
+ngx_http_srcache_evaluate_complex_value(ngx_http_request_t *r, ngx_http_complex_value_t *valuep)
+{
+    ngx_str_t                 value;
+
+    if(valuep == NULL)
+        return 1;
+
+    if(ngx_http_complex_value(r, valuep, &value) != NGX_OK)
+        return 1;
+    if(value.len != 1 || value.data[0] != '0')
+        return 1;
+    return 0;
 }
 
 /* vi:set ft=c ts=4 sw=4 et fdm=marker: */

@@ -63,12 +63,12 @@ typedef struct {
 
     ngx_int_t                       *store_statuses;
 
-    ngx_flag_t                       req_cache_control;
-    ngx_flag_t                       resp_cache_control;
+    ngx_http_complex_value_t        *req_cache_control;
+    ngx_http_complex_value_t        *resp_cache_control;
 
-    ngx_flag_t                       store_private;
-    ngx_flag_t                       store_no_store;
-    ngx_flag_t                       store_no_cache;
+    ngx_http_complex_value_t        *store_private;
+    ngx_http_complex_value_t        *store_no_store;
+    ngx_http_complex_value_t        *store_no_cache;
     ngx_flag_t                       store_ranges;
 
     ngx_flag_t                       ignore_content_encoding;
