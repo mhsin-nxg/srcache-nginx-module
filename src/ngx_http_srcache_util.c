@@ -558,10 +558,10 @@ ngx_http_srcache_response_no_cache(ngx_http_request_t *r,
 
     dd("checking response cache control settings");
 
-    store_private = ngx_http_srcache_evaluate_complex_value(r, conf->store_private);
-    store_no_store = ngx_http_srcache_evaluate_complex_value(r, conf->store_no_store);
-    store_no_cache = ngx_http_srcache_evaluate_complex_value(r, conf->store_no_cache);
-    store_expired = ngx_http_srcache_evaluate_complex_value(r, conf->store_expired);
+    store_private = ngx_http_srcache_evaluate_complex_value(r, conf->store_private, 0);
+    store_no_store = ngx_http_srcache_evaluate_complex_value(r, conf->store_no_store, 0);
+    store_no_cache = ngx_http_srcache_evaluate_complex_value(r, conf->store_no_cache, 0);
+    store_expired = ngx_http_srcache_evaluate_complex_value(r, conf->store_expired, 0);
 
     ccp = r->headers_out.cache_control.elts;
 
@@ -1281,15 +1281,15 @@ ngx_http_srcache_cmp_int(const void *one, const void *two)
 }
 
 ngx_int_t
-ngx_http_srcache_evaluate_complex_value(ngx_http_request_t *r, ngx_http_complex_value_t *valuep)
+ngx_http_srcache_evaluate_complex_value(ngx_http_request_t *r,
+    ngx_http_complex_value_t *valuep, ngx_int_t default_value)
 {
     ngx_str_t                 value;
 
     if(valuep == NULL)
-        return 1;
-
+        return default_value;
     if(ngx_http_complex_value(r, valuep, &value) != NGX_OK)
-        return 1;
+        return default_value;
     if(value.len != 1 || value.data[0] != '0')
         return 1;
     return 0;

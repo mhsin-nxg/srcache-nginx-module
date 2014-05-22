@@ -164,7 +164,7 @@ ngx_http_srcache_header_filter(ngx_http_request_t *r)
         return ngx_http_srcache_next_header_filter(r);
     }
 
-    if (ngx_http_srcache_evaluate_complex_value(r, slcf->resp_cache_control)
+    if (ngx_http_srcache_evaluate_complex_value(r, slcf->resp_cache_control, 1)
         && ngx_http_srcache_response_no_cache(r, slcf, ctx) == NGX_OK)
     {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,

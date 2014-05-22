@@ -56,7 +56,7 @@ ngx_http_srcache_access_handler(ngx_http_request_t *r)
         return NGX_DECLINED;
     }
 
-    if (ngx_http_srcache_evaluate_complex_value(r, conf->req_cache_control)
+    if (ngx_http_srcache_evaluate_complex_value(r, conf->req_cache_control, 1)
         && ngx_http_srcache_request_no_cache(r, &no_store) == NGX_OK)
     {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,

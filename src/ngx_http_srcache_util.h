@@ -55,7 +55,7 @@ ngx_int_t ngx_http_srcache_hide_headers_hash(ngx_conf_t *cf,
         ngx_str_t *default_hide_headers, ngx_hash_init_t *hash);
 ngx_int_t ngx_http_srcache_cmp_int(const void *one, const void *two);
 ngx_int_t ngx_http_srcache_evaluate_complex_value(ngx_http_request_t *r,
-        ngx_http_complex_value_t *valuep);
+        ngx_http_complex_value_t *valuep, ngx_int_t default_value);
 
 
 #endif /* _NGX_HTTP_SRCACHE_UTIL_H_INCLUDED_ */
