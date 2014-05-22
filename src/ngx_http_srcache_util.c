@@ -551,10 +551,10 @@ ngx_http_srcache_response_no_cache(ngx_http_request_t *r,
     u_char             *p, *last;
     ngx_int_t           n;
     time_t              expires;
-    ngx_flag_t          store_private;
-    ngx_flag_t          store_no_store;
-    ngx_flag_t          store_no_cache;
-    ngx_flag_t          store_expired;
+    ngx_int_t           store_private;
+    ngx_int_t           store_no_store;
+    ngx_int_t           store_no_cache;
+    ngx_int_t           store_expired;
 
     dd("checking response cache control settings");
 
@@ -1280,7 +1280,7 @@ ngx_http_srcache_cmp_int(const void *one, const void *two)
     return (*a < *b);
 }
 
-ngx_flag_t
+ngx_int_t
 ngx_http_srcache_evaluate_complex_value(ngx_http_request_t *r, ngx_http_complex_value_t *valuep)
 {
     ngx_str_t                 value;
